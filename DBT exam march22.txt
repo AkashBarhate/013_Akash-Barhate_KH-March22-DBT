@@ -1,0 +1,126 @@
+create table DEPT3
+(
+DEPTNO	int,
+DNAME varchar(15),
+LOC	varchar(10)
+);
+insert into DEPT3 values
+(10,'ACCOUNTING','NEW YORK'),
+(20	,'RESEARCH','DALLAS'),
+(30	,'SALES','CHICAGO'),
+(40	,'OPERATIONS','BOSTON');
+select * from dept3;
+create table EMP5
+(
+EMPNO	int,
+ENAME	varchar(10),
+JOB		varchar(9),
+HIREDATE  date,
+SAL	 float(7,2),
+COMM float(7,2),
+DEPTNO	int
+);
+
+insert into EMP5 values
+(7839,	'KING',	'MANAGER', '1991-11-17', 5000 ,NULL, 10),
+(7698,	'BLAKE','CLERK'	,'1981-05-01',	2850, NULL, 30),
+(7782,	'CLARK', 'MANAGER',	'1981-06-09', 2450, NULL,10),
+(7566,	'JONES','CLERK','1981-04-02', 2975, NULL, 20),
+(7654,	'MARTIN','SALESMAN','1981-09-28',1250,1400,	30),
+(7499, 'ALLEN','SALESMAN','1981-02-20'	,1600,300,30);
+select * from EMP5;
+
+-- Q3.Display all the employees where SAL between 2500 and 5000 (inclusive of both).
+select SAL from EMP5 where sal between 2500 and 5000;
+
+-- Q4.Display all the ENAMEs in descending order of ENAME.
+select ename from emp5 order by ename desc;
+
+-- Q5.Display all the JOBs in lowercase.
+select lower(Job) from emp5;
+
+-- Q6 Display the ENAMEs and the lengths of the ENAMEs.
+select ename, length(ename) as Ename_Length from emp5;
+
+-- Q7 Display the DEPTNO and the count of employees who belong to that DEPTNO
+  select deptno, count(ename) from emp5 group by deptno;
+  
+-- Q8 Display the DNAMEs and the ENAMEs who belong to that DNAME.
+    select dept3.dname,emp5.ename from emp5,dept3
+    where dept3.deptno=emp5.deptno;
+    
+-- Q9 Display the position at which the string ‘AR’ occurs in the ename.
+     select instr(ename,'AR') from emp5;
+   
+-- Q10 10.Display the HRA for each employee given that HRA is 20% of SAL.
+    select ename,sal,sal*0.2 as 'HRA' from emp5; 
+    
+-------------------------------------------------------------------------------------------------------    
+    -- Section 2
+   /* 1.Write a stored procedure by the name of PROC1 that accepts two varchar strings as parameters. 
+    Your procedure should then determine if the first varchar string exists inside the varchar string.
+    For example, if string1 = ‘DAC’ and string2 = ‘CDAC, then string1 exists inside string2.  The 
+    stored procedure should insert the appropriate message into a suitable TEMPP output table. Calling 
+    program for the stored procedure need not be written.*/
+    create table a1
+    (
+    str1 varchar(20),
+    str2 varchar(20),
+    res varchar(20)
+    );
+    
+  delimiter //
+  create procedure PROC1(strr1 varchar(20),strr2 varchar(20))
+  begin
+  if (instr(strr1,strr2)>0 or instr(strr2,strr1)>0) then
+     insert into a1 values(strr1,strr2,'exists');
+  else 
+    insert into a1 value(strr1,strr2,'Not exists');
+    end if;
+    end; //
+    delimiter ;
+    call PROC1('dac','cdac');
+    select * from a1;
+  
+  /*2.Create a stored function by the name of FUNC1 to take three parameters, the sides of a triangle.
+  The function should return a Boolean value:- TRUE if the triangle is valid, FALSE otherwise. A triangle 
+  is valid if the length of each side is less than the sum of the lengths of the other two sides. Check
+  if the dimensions entered can form a valid triangle. Calling program for the stored function need not be written.*/
+  
+  create table a2
+  (
+  a int,
+  b int,
+  c int,
+  res varchar(20)
+  );
+  
+  delimiter //
+  create function FUNC1(a int,b int, c int)
+  returns boolean
+  deterministic
+  begin
+   if a+b>c and a+c>d and b+c>a then
+     return true;
+   else 
+       return false;
+   end if;
+   end; //
+   delimiter ;
+   
+   delimiter //
+   create procedure xyz(a int,b int, c int)
+   begin
+       declare x int;
+       set x=FUNC1(a,b,c);
+       if x then
+            insert into a2 values(a,b,c, 'Valid Triangle');
+            else
+            insert into a2 values(a,b,c, 'Invalid Triangle');
+       end if;
+end; //
+delimiter ;
+drop procedure xyz;
+call xyz(-10,-20,-30);
+call xyz(10,10,10);
+select * from a2;
